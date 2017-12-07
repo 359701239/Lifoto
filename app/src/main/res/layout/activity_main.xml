@@ -25,7 +25,7 @@
                 <com.external.lifoto.design.widget.FitToolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="@dimen/actionbarSize"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                     <TextView
@@ -36,7 +36,7 @@
                         android:layout_gravity="center"
                         android:text="@string/app_name_full"
                         android:textColor="@android:color/white"
-                        android:textSize="20dp" />
+                        android:textSize="@dimen/textSize_art" />
                 </com.external.lifoto.design.widget.FitToolbar>
 
                 <android.support.design.widget.TabLayout

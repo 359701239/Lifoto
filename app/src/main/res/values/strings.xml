@@ -2,7 +2,15 @@
     <string name="app_name">Lifoto</string>
     <string name="app_name_full">Lifoto Wallpaper</string>
 
+    <string name="activity_about">关于</string>
+    <string name="activity_download">下载管理</string>
+    <string name="activity_setting">设置</string>
+
+    <string name="sure">确定</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="about_content">Lifoto Wallpaper高清壁纸来自Unsplash，可以下载精美图片，将精彩图片设置为手机壁纸。</string>
+
 </resources>

@@ -20,6 +20,7 @@ import com.external.lifoto.design.GridItemDivider;
 import com.external.lifoto.design.RecyclerViewScrollDetector;
 import com.external.lifoto.utils.NetUtil;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
@@ -61,7 +62,7 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
         scrollListener = new EndlessRecyclerOnScrollListener(layoutManager) {
             @Override
             public void onLoadMore() {
-                loadMoreTask = new LoadMoreAsyncTask();
+                loadMoreTask = new LoadMoreAsyncTask(SortFragment.this);
                 loadMoreTask.execute(Api.getSortUrl(getTitle(), ++currentPage));
             }
         };
@@ -82,11 +83,16 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
     @Override
     public void onRefresh() {
         currentPage = 1;
-        refreshTask = new RefreshAsyncTask();
+        refreshTask = new RefreshAsyncTask(this);
         refreshTask.execute(Api.getSortUrl(getTitle(), 1));
     }
 
-    class RefreshAsyncTask extends android.os.AsyncTask<String, Void, ArrayList<PhotoItem>> {
+    static class RefreshAsyncTask extends android.os.AsyncTask<String, Void, ArrayList<PhotoItem>> {
+        private WeakReference<SortFragment> fragmentWeakReference;
+
+        private RefreshAsyncTask(SortFragment fragment) {
+            fragmentWeakReference = new WeakReference<>(fragment);
+        }
 
         @Override
         protected ArrayList<PhotoItem> doInBackground(String... strings) {
@@ -101,21 +107,26 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
 
         @Override
         protected void onPostExecute(ArrayList<PhotoItem> photoItems) {
-            if (adapter == null) {
-                adapter = new MainListAdapter(SortFragment.this, photoItems);
-                recyclerView.setAdapter(adapter);
+            if (fragmentWeakReference.get().adapter == null) {
+                fragmentWeakReference.get().adapter = new MainListAdapter(fragmentWeakReference.get(), photoItems);
+                fragmentWeakReference.get().recyclerView.setAdapter(fragmentWeakReference.get().adapter);
             } else {
-                adapter.setData(photoItems);
+                fragmentWeakReference.get().adapter.setData(photoItems);
             }
-            refreshLayout.setRefreshing(false);
+            fragmentWeakReference.get().refreshLayout.setRefreshing(false);
         }
     }
 
-    class LoadMoreAsyncTask extends android.os.AsyncTask<String, Void, ArrayList<PhotoItem>> {
+    static class LoadMoreAsyncTask extends android.os.AsyncTask<String, Void, ArrayList<PhotoItem>> {
+        private WeakReference<SortFragment> fragmentWeakReference;
+
+        private LoadMoreAsyncTask(SortFragment fragment) {
+            fragmentWeakReference = new WeakReference<>(fragment);
+        }
 
         @Override
         protected void onPreExecute() {
-            refreshLayout.setRefreshing(true);
+            fragmentWeakReference.get().refreshLayout.setRefreshing(true);
         }
 
         @Override
@@ -131,11 +142,11 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
 
         @Override
         protected void onPostExecute(ArrayList<PhotoItem> photoItems) {
-            if (adapter != null) {
-                adapter.insertData(photoItems);
+            if (fragmentWeakReference.get().adapter != null) {
+                fragmentWeakReference.get().adapter.insertData(photoItems);
             }
-            scrollListener.setLoadFinish();
-            refreshLayout.setRefreshing(false);
+            fragmentWeakReference.get().scrollListener.setLoadFinish();
+            fragmentWeakReference.get().refreshLayout.setRefreshing(false);
         }
     }
 

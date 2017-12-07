@@ -1,8 +1,10 @@
 package com.external.lifoto;
 
-import android.graphics.Color;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -15,8 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +24,9 @@ import com.external.lifoto.adapter.MainPagerAdapter;
 import com.external.lifoto.content.TabList;
 import com.external.lifoto.design.widget.FitToolbar;
 import com.external.lifoto.fragment.SortFragment;
+import com.external.lifoto.utils.Dialog;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
@@ -44,10 +46,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MainPagerAdapter pagerAdapter;
     private ArrayList<SortFragment> fragments;
 
+    private Handler handler;
+    private static final int MSG_EXIT = 0;
+    private static final int MSG_DOWNLOAD = 1;
+    private static final int MSG_SETTING = 2;
+    private static final int MSG_ABOUT = 3;
+    private static final int MSG_DELAY = 250;
+
+    private long exitTime;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        handler = new Handler(this);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer);
         navigationView = (NavigationView) findViewById(R.id.navigation);
@@ -72,20 +85,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.setting:
-                        Toast.makeText(MainActivity.this,
-                                "sub item 01", Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        break;
-                }
-                drawer.closeDrawers();
-                return true;
-            }
-        });
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.download:
+                                handler.sendEmptyMessageDelayed(MSG_DOWNLOAD, MSG_DELAY);
+                                break;
+                            case R.id.setting:
+                                handler.sendEmptyMessageDelayed(MSG_SETTING, MSG_DELAY);
+                                break;
+                            case R.id.about:
+                                handler.sendEmptyMessageDelayed(MSG_ABOUT, MSG_DELAY);
+                                break;
+                            case R.id.exit:
+                                handler.sendEmptyMessage(MSG_EXIT);
+                                return true;
+                        }
+                        drawer.closeDrawers();
+                        return true;
+                    }
+                });
     }
 
     private void initPager() {
@@ -115,7 +134,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (drawer.isDrawerOpen(Gravity.START)) {
             drawer.closeDrawer(Gravity.START);
         } else {
-            super.onBackPressed();
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+            }
+        }
+    }
+
+    private static class Handler extends android.os.Handler {
+        private WeakReference<Activity> mActivity;
+
+        private Handler(Activity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_EXIT:
+                    mActivity.get().finish();
+                    break;
+                case MSG_DOWNLOAD:
+                    mActivity.get().startActivity(new Intent(mActivity.get(), DownloadActivity.class));
+                    break;
+                case MSG_SETTING:
+                    mActivity.get().startActivity(new Intent(mActivity.get(), SettingActivity.class));
+                    break;
+                case MSG_ABOUT:
+                    Dialog.showSimpleDialog(mActivity.get(), R.string.activity_about, R.string.about_content);
+                    break;
+            }
         }
     }
 }

@@ -31,6 +31,13 @@
             android:name=".MainActivity"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTask" />
+
+        <activity
+            android:name=".DownloadActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SettingActivity"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

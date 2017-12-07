@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="actionbarSize">52dp</dimen>
     <dimen name="staggeredDivider">6dp</dimen>
+
+    <dimen name="textSize_art">20dp</dimen>
+    <dimen name="textSize_actionbar">16dp</dimen>
 </resources>
