@@ -10,9 +10,7 @@ import java.util.Locale;
 
 public class Api {
 
-    private static String SOURCE_NEW = String.format("https://api.unsplash.com/photos?client_id=%s&page=1&per_page=15&order_by=latest", Lifoto.API_KEY);
-    private static String SOURCE_GOOD = String.format("https://api.unsplash.com/photos/curated?client_id=%s&page=1&per_page=15&order_by=latest", Lifoto.API_KEY);
-
+    private static final int perPageNum = 25;
 
     public static String getSortUrl(String category, int page) {
         switch (category) {
@@ -29,9 +27,9 @@ public class Api {
             case "科技":
                 return getCategoryUrl(7, page);
             case "最新作品":
-                return SOURCE_NEW;
+                return getNewListUrl(page);
             case "精选":
-                return SOURCE_GOOD;
+                return getGoodListUrl(page);
             default:
                 return null;
         }
@@ -43,5 +41,13 @@ public class Api {
 
     private static String getCategoryUrl(int which, int page) {
         return String.format(Locale.ENGLISH, "https://api.unsplash.com/categories/%d/photos?client_id=%s&page=%d&per_page=15", which, Lifoto.API_KEY, page);
+    }
+
+    private static String getNewListUrl(int page) {
+        return String.format(Locale.ENGLISH, "https://api.unsplash.com/photos?client_id=%s&page=%d&per_page=%d&order_by=latest", Lifoto.API_KEY, page, perPageNum);
+    }
+
+    private static String getGoodListUrl(int page) {
+        return String.format(Locale.ENGLISH, "https://api.unsplash.com/photos/curated?client_id=%s&page=%d&per_page=%d&order_by=latest", Lifoto.API_KEY, page, perPageNum);
     }
 }

@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.external.lifoto">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".Lifoto"
         android:allowBackup="true"
@@ -13,7 +15,7 @@
 
         <meta-data
             android:name="apiKey"
-            android:value="@string/app_apiKey" />
+            android:value="e56930b9f9ed6a12276ba10a4ef5ebf740b399826020fcd9ede41a02b24f49a3" />
 
         <activity
             android:name=".SplashActivity"

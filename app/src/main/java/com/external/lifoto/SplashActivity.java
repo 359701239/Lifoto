@@ -12,6 +12,14 @@ import android.view.WindowManager;
 public class SplashActivity extends AppCompatActivity {
 
     private Handler handler = new Handler();
+    private Runnable start = new Runnable() {
+        @Override
+        public void run() {
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,14 +27,7 @@ public class SplashActivity extends AppCompatActivity {
         setBarsTranslucent();
         setContentView(R.layout.activity_splash);
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }, 2000);
+        handler.postDelayed(start, 2000);
     }
 
     public void setBarsTranslucent() {
@@ -37,5 +38,11 @@ public class SplashActivity extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.TRANSPARENT);
         window.setNavigationBarColor(Color.TRANSPARENT);
+    }
+
+    @Override
+    public void onBackPressed() {
+        handler.removeCallbacks(start);
+        super.onBackPressed();
     }
 }

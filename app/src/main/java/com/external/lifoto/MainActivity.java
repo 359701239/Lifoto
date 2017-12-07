@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
  * Created by zuojie on 17-11-30.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -41,16 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView title;
 
     private MainPagerAdapter pagerAdapter;
+    private ArrayList<SortFragment> fragments;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window window = getWindow();
-        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(Color.TRANSPARENT);
         setContentView(R.layout.activity_main);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer);
@@ -94,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initPager() {
         String[] tabs = TabList.tabs;
-        ArrayList<SortFragment> fragments = new ArrayList<>();
+        fragments = new ArrayList<>();
         for (String tab : tabs) {
             SortFragment fragment = new SortFragment();
             fragment.setTitle(tab);
@@ -103,5 +99,23 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter = new MainPagerAdapter(getFragmentManager(), fragments);
         pager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(pager);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.action:
+                fragments.get(pager.getCurrentItem()).goToTop();
+                break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(Gravity.START)) {
+            drawer.closeDrawer(Gravity.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 }
