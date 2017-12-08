@@ -1,5 +1,7 @@
 package com.external.lifoto.utils;
 
+import android.util.Log;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -21,9 +23,8 @@ public class NetUtil {
                 return execute.body().string();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w("NetUtil", "Network Error");
         }
-
         return "";
     }
 }

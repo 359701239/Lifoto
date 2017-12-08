@@ -12,5 +12,11 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="about_content">Lifoto Wallpaper高清壁纸来自Unsplash，可以下载精美图片，将精彩图片设置为手机壁纸。</string>
+    <string name="error_nonet">网络错误\n点击重新加载</string>
+    <string name="tip_exit">再按一次退出程序</string>
 
+    <string name="detail_load">下载</string>
+    <string name="detail_share">分享</string>
+    <string name="detail_set_page">设为壁纸</string>
+    <string name="detail_photo_attr">照片属性</string>
 </resources>

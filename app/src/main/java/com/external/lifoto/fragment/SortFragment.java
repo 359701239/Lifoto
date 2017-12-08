@@ -8,6 +8,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
@@ -33,6 +34,7 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
     private MainListAdapter adapter;
     private StaggeredGridLayoutManager layoutManager;
     private SwipeRefreshLayout refreshLayout;
+    private TextView noNet;
 
     private RefreshAsyncTask refreshTask;
     private LoadMoreAsyncTask loadMoreTask;
@@ -46,6 +48,9 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
 
         recyclerView = root.findViewById(R.id.list);
         refreshLayout = root.findViewById(R.id.refresh);
+        noNet = root.findViewById(R.id.noNet);
+
+        noNet.setOnClickListener(this);
 
         initList();
         onRefresh();
@@ -67,7 +72,6 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
             }
         };
         recyclerView.addOnScrollListener(scrollListener);
-        refreshLayout.setRefreshing(true);
     }
 
     public void goToTop() {
@@ -77,12 +81,18 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()) {
+            case R.id.noNet:
+                onRefresh();
+                break;
+        }
     }
 
     @Override
     public void onRefresh() {
         currentPage = 1;
+        refreshLayout.setRefreshing(true);
+        noNet.setVisibility(View.GONE);
         refreshTask = new RefreshAsyncTask(this);
         refreshTask.execute(Api.getSortUrl(getTitle(), 1));
     }
@@ -99,16 +109,17 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
             String path = strings[0];
             try {
                 return PhotoItem.parseItems(JSON.parseArray(NetUtil.GetEncHtml(path)));
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
                 return null;
             }
         }
 
         @Override
         protected void onPostExecute(ArrayList<PhotoItem> photoItems) {
-            if (fragmentWeakReference.get().adapter == null) {
-                fragmentWeakReference.get().adapter = new MainListAdapter(fragmentWeakReference.get(), photoItems);
+            if (photoItems == null) {
+                fragmentWeakReference.get().noNet.setVisibility(View.VISIBLE);
+            } else if (fragmentWeakReference.get().adapter == null) {
+                fragmentWeakReference.get().adapter = new MainListAdapter(fragmentWeakReference.get().activity, photoItems);
                 fragmentWeakReference.get().recyclerView.setAdapter(fragmentWeakReference.get().adapter);
             } else {
                 fragmentWeakReference.get().adapter.setData(photoItems);
@@ -134,15 +145,16 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
             String path = strings[0];
             try {
                 return PhotoItem.parseItems(JSON.parseArray(NetUtil.GetEncHtml(path)));
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
                 return null;
             }
         }
 
         @Override
         protected void onPostExecute(ArrayList<PhotoItem> photoItems) {
-            if (fragmentWeakReference.get().adapter != null) {
+            if (photoItems == null) {
+                fragmentWeakReference.get().noNet.setVisibility(View.VISIBLE);
+            } else if (fragmentWeakReference.get().adapter != null) {
                 fragmentWeakReference.get().adapter.insertData(photoItems);
             }
             fragmentWeakReference.get().scrollListener.setLoadFinish();

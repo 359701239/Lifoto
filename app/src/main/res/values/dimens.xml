@@ -1,8 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
     <dimen name="actionbarSize">52dp</dimen>
-    <dimen name="staggeredDivider">6dp</dimen>
+    <dimen name="staggeredDivider">8dp</dimen>
 
     <dimen name="textSize_art">20dp</dimen>
     <dimen name="textSize_actionbar">16dp</dimen>
+    <dimen name="textSize_mini">12dp</dimen>
+    <dimen name="textSize_normal">16dp</dimen>
+
+    <!--Icons-->
+    <dimen name="icon_margin">24dp</dimen>
+    <dimen name="icon_width_height">20dp</dimen>
+    <dimen name="big_icon">36dp</dimen>
+    <dimen name="icon_sub_width_height">16dp</dimen>
+    <dimen name="icon_elevation">10dp</dimen>
+    <dimen name="big_background_icon">72dp</dimen>
+    <!--Padding and Margin-->
+    <dimen name="big_spacing">24dp</dimen>
+    <dimen name="sub_big_spacing">20dp</dimen>
+    <dimen name="medium_spacing">16dp</dimen>
+    <dimen name="sub_medium_spacing">14dp</dimen>
+    <dimen name="small_spacing">8dp</dimen>
+    <dimen name="sub_small_spacing">5dp</dimen>
 </resources>

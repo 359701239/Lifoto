@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:expandedTitleGravity="center|bottom"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <com.external.lifoto.design.widget.ScaleImageView
+                android:id="@+id/thumb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:transitionName="a"
+                app:layout_collapseMode="parallax" />
+
+            <com.external.lifoto.design.widget.FitToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/actionbarSize"
+                android:layout_marginTop="24dp"
+                app:layout_collapseMode="pin">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:text="@string/activity_download"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/textSize_actionbar" />
+            </com.external.lifoto.design.widget.FitToolbar>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/detail_photo_layout" />
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -18,13 +17,13 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.external.lifoto.adapter.MainPagerAdapter;
 import com.external.lifoto.content.TabList;
 import com.external.lifoto.design.widget.FitToolbar;
 import com.external.lifoto.fragment.SortFragment;
 import com.external.lifoto.utils.Dialog;
+import com.external.lifoto.utils.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -38,12 +37,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private FitToolbar toolbar;
-    private AppBarLayout appBarLayout;
     private TabLayout tabLayout;
     private ViewPager pager;
     private TextView title;
 
-    private MainPagerAdapter pagerAdapter;
     private ArrayList<SortFragment> fragments;
 
     private Handler handler;
@@ -62,13 +59,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         handler = new Handler(this);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer);
-        navigationView = (NavigationView) findViewById(R.id.navigation);
-        toolbar = (FitToolbar) findViewById(R.id.toolbar);
-        appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-        tabLayout = (TabLayout) findViewById(R.id.tab);
-        pager = (ViewPager) findViewById(R.id.pager);
-        title = (TextView) findViewById(R.id.title);
+        drawer = findViewById(R.id.drawer);
+        navigationView = findViewById(R.id.navigation);
+        toolbar = findViewById(R.id.toolbar);
+        tabLayout = findViewById(R.id.tab);
+        pager = findViewById(R.id.pager);
+        title = findViewById(R.id.title);
 
         init();
         initPager();
@@ -115,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             fragment.setTitle(tab);
             fragments.add(fragment);
         }
-        pagerAdapter = new MainPagerAdapter(getFragmentManager(), fragments);
+        MainPagerAdapter pagerAdapter = new MainPagerAdapter(getFragmentManager(), fragments);
         pager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(pager);
     }
@@ -135,10 +131,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             drawer.closeDrawer(Gravity.START);
         } else {
             if ((System.currentTimeMillis() - exitTime) > 2000) {
-                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                Toast.show(getApplicationContext(), getString(R.string.tip_exit));
                 exitTime = System.currentTimeMillis();
             } else {
                 finish();
+                Toast.cancelToast();
             }
         }
     }

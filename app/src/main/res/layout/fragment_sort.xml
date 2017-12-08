@@ -19,4 +19,15 @@
             android:padding="@dimen/staggeredDivider" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <TextView
+        android:id="@+id/noNet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:drawableTop="@drawable/ic_no_net"
+        android:gravity="center"
+        android:text="@string/error_nonet"
+        android:textSize="@dimen/textSize_normal"
+        android:visibility="gone" />
+
 </RelativeLayout>

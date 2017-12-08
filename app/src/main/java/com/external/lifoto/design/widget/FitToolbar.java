@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.widget.LinearLayout;
 
@@ -27,7 +28,11 @@ public class FitToolbar extends Toolbar {
 
     @Override
     public WindowInsets onApplyWindowInsets(WindowInsets insets) {
-        ((LinearLayout.LayoutParams) getLayoutParams()).topMargin = insets.getSystemWindowInsetTop();
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
+            marginLayoutParams.topMargin = insets.getSystemWindowInsetTop();
+        }
         return super.onApplyWindowInsets(insets);
     }
 }
