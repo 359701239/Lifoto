@@ -9,14 +9,18 @@ import android.content.res.Resources;
 
 public class SystemBarUtil {
 
+    private static int navigationBarHeight = 0;
+
     public static int getNavigationBarHeight(Context context) {
-        try {
-            Resources resources = context.getResources();
-            int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-            return resources.getDimensionPixelSize(resourceId);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (navigationBarHeight == 0) {
+            try {
+                Resources resources = context.getResources();
+                int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+                navigationBarHeight = resources.getDimensionPixelSize(resourceId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return 0;
+        return navigationBarHeight;
     }
 }

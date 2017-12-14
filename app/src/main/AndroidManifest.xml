@@ -3,6 +3,7 @@
     package="com.external.lifoto">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".Lifoto"
@@ -17,6 +18,10 @@
         <meta-data
             android:name="apiKey"
             android:value="e56930b9f9ed6a12276ba10a4ef5ebf740b399826020fcd9ede41a02b24f49a3" />
+
+        <!--<meta-data-->
+            <!--android:name="apiKey"-->
+            <!--android:value="eb54e3b9dc12b9e0862b028b646085355d20b3442fbdfca4633ca0f7b01ef9a6" />-->
 
         <activity
             android:name=".SplashActivity"
@@ -41,7 +46,10 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".DetailActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.Dialog" />
+
+        <service android:name=".utils.DownloadService" />
     </application>
 
 </manifest>

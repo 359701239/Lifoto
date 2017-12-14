@@ -17,23 +17,20 @@ import android.view.animation.Interpolator;
  */
 
 public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
-    //先慢后快再慢
     private static final Interpolator INTERPOLATOR = new FastOutSlowInInterpolator();
     private boolean mIsAnimatingOut = false;
-    private final int touchSlop = 2;
+    private static final int touchSlop = 2;
 
     public ScrollAwareFABBehavior(Context context, AttributeSet attrs) {
         super();
     }
 
-    //初始条件
     @Override
     public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout,
                                        @NonNull FloatingActionButton child,
                                        @NonNull View directTargetChild,
                                        @NonNull View target,
                                        final int nestedScrollAxes) {
-        //垂直滚动
         return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
                 || super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);
     }
@@ -52,9 +49,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
         }
     }
 
-    // Same animation that FloatingActionButton.Behavior uses to hide the FAB when the AppBarLayout exits
     private void animateOut(final FloatingActionButton button) {
-        //withLayer()使动画中的某些操作变得更顺畅,加速渲染,API 14以后
         ViewCompat.animate(button).translationY(button.getHeight() + getMarginBottom(button)).setInterpolator(INTERPOLATOR)
                 .withLayer().setListener(new ViewPropertyAnimatorListener() {
             public void onAnimationStart(View view) {
@@ -72,7 +67,6 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
         }).start();
     }
 
-    // Same animation that FloatingActionButton.Behavior uses to show the FAB when the AppBarLayout enters
     private void animateIn(FloatingActionButton button) {
         button.setVisibility(View.VISIBLE);
         ViewCompat.animate(button).translationY(0)

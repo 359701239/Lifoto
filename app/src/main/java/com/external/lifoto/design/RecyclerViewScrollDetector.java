@@ -8,13 +8,15 @@ import android.support.v7.widget.RecyclerView;
 
 public abstract class RecyclerViewScrollDetector extends RecyclerView.OnScrollListener {
 
+    private static final int touchSlop = 2;
+
     public abstract void onScrollUp();
 
     public abstract void onScrollDown();
 
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-        if (dy > 0) {
+        if (dy > touchSlop) {
             onScrollUp();
         } else {
             onScrollDown();

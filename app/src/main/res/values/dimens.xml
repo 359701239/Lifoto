@@ -25,4 +25,6 @@
     <dimen name="sub_medium_spacing">14dp</dimen>
     <dimen name="small_spacing">8dp</dimen>
     <dimen name="sub_small_spacing">5dp</dimen>
+
+    <dimen name="photo_attr_height">40dp</dimen>
 </resources>

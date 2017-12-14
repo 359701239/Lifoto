@@ -3,9 +3,11 @@ package com.external.lifoto.adapter;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +19,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.external.lifoto.DetailActivity;
 import com.external.lifoto.R;
 import com.external.lifoto.bean.PhotoItem;
@@ -60,19 +65,20 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         PhotoItem item = items.get(position);
-        int color = Color.parseColor(item.getColor());
-        if (Color.red(color) > 200 && Color.green(color) > 200 && Color.blue(color) > 200) {
-            holder.bottom.setBackgroundColor(Color.parseColor("#C8C8C8"));
-        } else {
-            holder.bottom.setBackgroundColor(color);
-        }
+        holder.bottom.setBackgroundColor(Color.parseColor(item.getColor()));
         holder.likes.setText(String.valueOf(item.getLikes()));
         holder.thumb.setInitSize(item.getWidth(), item.getHeight());
-        Glide.with(context).load(Uri.parse(item.getUrl_small()))
+        Glide.with(context).load(item.getUrl_regular())
+                .crossFade()
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
-                .into(holder.thumb);
+                .into(new SimpleTarget<GlideDrawable>() {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                        holder.thumb.setImageDrawable(resource);
+                    }
+                });
         holder.more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,8 +98,12 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra("item", items.get(holder.getAdapterPosition()));
-                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(context, holder.thumb, "a").toBundle());
-
+                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(context,
+                        Pair.create((View) holder.more, "e"),
+                        Pair.create((View) holder.bottom, "c"),
+                        Pair.create((View) holder.card, "b"),
+                        Pair.create((View) holder.thumb, "a")).toBundle());
+//                context.startActivity(intent);
             }
         });
     }

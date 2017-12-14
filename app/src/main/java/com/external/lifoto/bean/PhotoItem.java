@@ -1,5 +1,6 @@
 package com.external.lifoto.bean;
 
+import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -22,20 +23,27 @@ public class PhotoItem implements Parcelable {
     private String description;
     private String url_raw;
     private String url_full;
+    private String url_regular;
     private String url_small;
     private String url_thumb;
     private int likes;
 
     private PhotoItem(String id, int width, int height, String color, String description,
-                      String url_raw, String url_full, String url_small, String url_thumb,
+                      String url_raw, String url_full, String url_regular, String url_small, String url_thumb,
                       int likes) {
         this.id = id;
         this.width = width;
         this.height = height;
-        this.color = color;
+        int colorTemp = Color.parseColor(color);
+        if (Color.red(colorTemp) > 200 && Color.green(colorTemp) > 200 && Color.blue(colorTemp) > 200) {
+            this.color = "#C0C0C0";
+        } else {
+            this.color = color;
+        }
         this.description = description;
         this.url_raw = url_raw;
         this.url_full = url_full;
+        this.url_regular = url_regular;
         this.url_small = url_small;
         this.url_thumb = url_thumb;
         this.likes = likes;
@@ -49,6 +57,7 @@ public class PhotoItem implements Parcelable {
         description = in.readString();
         url_raw = in.readString();
         url_full = in.readString();
+        url_regular = in.readString();
         url_small = in.readString();
         url_thumb = in.readString();
         likes = in.readInt();
@@ -94,6 +103,10 @@ public class PhotoItem implements Parcelable {
         return url_full;
     }
 
+    public String getUrl_regular() {
+        return url_regular;
+    }
+
     public String getUrl_small() {
         return url_small;
     }
@@ -118,12 +131,13 @@ public class PhotoItem implements Parcelable {
             JSONObject urlArray = item.getJSONObject("urls");
             String url_raw = urlArray.getString("raw");
             String url_full = urlArray.getString("full");
+            String url_regular = urlArray.getString("regular");
             String url_small = urlArray.getString("small");
             String url_thumb = urlArray.getString("thumb");
             int likes = item.getIntValue("likes");
 
             items.add(new PhotoItem(id, width, height, color, description,
-                    url_raw, url_full, url_small, url_thumb,
+                    url_raw, url_full, url_regular, url_small, url_thumb,
                     likes));
         }
         return items;
@@ -143,6 +157,7 @@ public class PhotoItem implements Parcelable {
         dest.writeString(description);
         dest.writeString(url_raw);
         dest.writeString(url_full);
+        dest.writeString(url_regular);
         dest.writeString(url_small);
         dest.writeString(url_thumb);
         dest.writeInt(likes);

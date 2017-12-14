@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONException;
 import com.external.lifoto.R;
 import com.external.lifoto.adapter.MainListAdapter;
 import com.external.lifoto.bean.PhotoItem;

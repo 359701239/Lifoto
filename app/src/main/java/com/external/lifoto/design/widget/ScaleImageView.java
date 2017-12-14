@@ -36,9 +36,9 @@ public class ScaleImageView extends android.support.v7.widget.AppCompatImageView
 
             float scale = (float) initHeight / (float) initWidth;
             if (width > 0) {
-                height = (int) Math.floor ((float) width * scale);
+                height = (int) ((float) width * scale);
             }
-            setMeasuredDimension(width, height);
+            setMeasuredDimension(widthMeasureSpec, height);
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }

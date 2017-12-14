@@ -19,4 +19,5 @@
     <string name="detail_share">分享</string>
     <string name="detail_set_page">设为壁纸</string>
     <string name="detail_photo_attr">照片属性</string>
+    <string name="text_clearcache">清除缓存</string>
 </resources>
