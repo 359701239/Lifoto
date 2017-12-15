@@ -3,9 +3,7 @@ package com.external.lifoto.adapter;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -68,7 +66,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
         holder.bottom.setBackgroundColor(Color.parseColor(item.getColor()));
         holder.likes.setText(String.valueOf(item.getLikes()));
         holder.thumb.setInitSize(item.getWidth(), item.getHeight());
-        Glide.with(context).load(item.getUrl_regular())
+        Glide.with(context).load(item.getUrl_small())
                 .crossFade()
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

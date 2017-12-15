@@ -96,7 +96,7 @@ public class DetailActivity extends Activity implements View.OnClickListener {
     private void initView() {
         container.setCardBackgroundColor(Color.parseColor(item.getColor()));
         thumb.setInitSize(item.getWidth(), item.getHeight());
-        Glide.with(this).load(Uri.parse(item.getUrl_regular()))
+        Glide.with(this).load(Uri.parse(item.getUrl_small()))
                 .asBitmap()
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -146,8 +146,12 @@ public class DetailActivity extends Activity implements View.OnClickListener {
     }
 
     private void download(boolean setPaper) {
+        if (downloading) {
+            Toast.makeText(this, "正在下载", Toast.LENGTH_SHORT).show();
+            return;
+        }
         Intent intent = new Intent(this, DownloadService.class);
-        intent.putExtra(DownloadService.PHOTO_LOAD_URL, item.getUrl_raw());
+        intent.putExtra(DownloadService.PHOTO_LOAD_URL, item.getUrl_full());
         intent.putExtra(DownloadService.PHOTO_ID, item.getId());
         intent.putExtra(DownloadService.PHOTO_SET, setPaper);
         startService(intent);
@@ -159,15 +163,14 @@ public class DetailActivity extends Activity implements View.OnClickListener {
             return;
         }
 
-        if (event.getPhotoId().equals(item.getId())) {
+        progressBar.setProgress(event.getProgress());
+        if (event.getProgress() < 100) {
             downloading = true;
             progressBar.animate()
                     .alpha(1)
                     .setDuration(300)
                     .start();
-            progressBar.setProgress(event.getProgress());
-        }
-        if (event.getProgress() == 100) {
+        } else {
             progressBar.animate()
                     .alpha(0)
                     .setDuration(800)
@@ -226,6 +229,7 @@ public class DetailActivity extends Activity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
         attrs.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
         super.onBackPressed();
     }
 }

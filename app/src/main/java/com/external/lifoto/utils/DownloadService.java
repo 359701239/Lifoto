@@ -1,7 +1,6 @@
 package com.external.lifoto.utils;
 
 import android.app.IntentService;
-import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,7 +8,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.widget.*;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -33,7 +31,6 @@ public class DownloadService extends IntentService {
     public static final String PHOTO_ID = "photo_id";
     public static final String PHOTO_SET = "photo_set";
     private LoadPhotoEvent mLoadPhotoEvent;
-    private WallpaperManager wallpaperManager;
 
     public DownloadService() {
         super(TAG);
@@ -57,11 +54,14 @@ public class DownloadService extends IntentService {
         String photoId = intent.getStringExtra(PHOTO_ID);
         Bitmap paper = null;
 
+        mLoadPhotoEvent.setPhotoId(photoId);
         File file = new File(Environment.getExternalStorageDirectory() + "/Lifoto/" + photoId + ".jpg");
-        if (file.exists() && !setPaper) {
+        if (file.exists()) {
             mLoadPhotoEvent.setDone(true);
             EventBus.getDefault().post(mLoadPhotoEvent);//发送事件,图片文件已存在
-            return;
+            if (!setPaper) {
+                return;
+            }
         }
         if (!file.exists()) {
             HttpURLConnection connec = null;
@@ -81,7 +81,6 @@ public class DownloadService extends IntentService {
                     while ((length = is.read(buffer)) != -1) {
                         progress += length;
                         mLoadPhotoEvent.setProgress(progress * 100 / contentLength);
-                        mLoadPhotoEvent.setPhotoId(photoId);
                         EventBus.getDefault().postSticky(mLoadPhotoEvent);//发送事件,更新UI
                         bos.write(buffer, 0, length);
                     }
