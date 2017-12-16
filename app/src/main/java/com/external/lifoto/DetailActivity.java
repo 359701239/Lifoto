@@ -146,7 +146,7 @@ public class DetailActivity extends Activity implements View.OnClickListener {
             return;
         }
         Intent intent = new Intent(this, DownloadService.class);
-        intent.putExtra(DownloadService.PHOTO_LOAD_URL, item.getUrl_regular());
+        intent.putExtra(DownloadService.PHOTO_LOAD_URL, item.getUrl_full());
         intent.putExtra(DownloadService.PHOTO_ID, item.getId());
         startService(intent);
     }

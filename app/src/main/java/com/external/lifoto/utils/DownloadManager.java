@@ -2,27 +2,26 @@ package com.external.lifoto.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by zuojie on 17-12-16.
@@ -34,6 +33,7 @@ public class DownloadManager {
     private static Context mContext = null;
     private final static int MAX_THREAD = 3;
     private ThreadPoolExecutor threadPool;
+    private OkHttpClient okHttpClient;
 
     public static void init(Context context) {
         mContext = context;
@@ -50,6 +50,7 @@ public class DownloadManager {
     }
 
     public DownloadManager() {
+        okHttpClient = new OkHttpClient();
         threadPool = new ThreadPoolExecutor(MAX_THREAD, MAX_THREAD, 60, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<Runnable>(), new ThreadFactory() {
             private AtomicInteger mInteger = new AtomicInteger(1);
 
@@ -66,75 +67,58 @@ public class DownloadManager {
 
     private class DownloadTask implements Runnable {
 
-        private DownloadTask(String url, String file, String tag) {
-            DownloadEvent mLoadPhotoEvent = new DownloadEvent();
-            mLoadPhotoEvent.setFileId(tag);
-            HttpURLConnection connection = null;
-            try {
-                connection = (HttpURLConnection) new URL(url).openConnection();
-                connection.setDoInput(true);
-                connection.setConnectTimeout(20 * 1000);
-                int code = connection.getResponseCode();
-                if (code == 200) {
-                    InputStream is = connection.getInputStream();
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    int length;
-                    int progress = 0;
-                    int contentLength = connection.getContentLength();
-                    byte[] buffer = new byte[1024];
-                    while ((length = is.read(buffer)) != -1) {
-                        progress += length;
-                        mLoadPhotoEvent.setProgress(progress * 100 / contentLength);
-                        EventBus.getDefault().postSticky(mLoadPhotoEvent);//发送事件,更新UI
-                        bos.write(buffer, 0, length);
-                    }
-                    mLoadPhotoEvent.setDone();
-                    EventBus.getDefault().post(mLoadPhotoEvent);//发送事件,更新UI
-                    bos.flush();
-                    bos.close();
-                    is.close();
-                    savePhoto(file, bos);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
+        private String url, file, tag;
+
+        public DownloadTask(String url, String file, String tag) {
+            this.url = url;
+            this.file = file;
+            this.tag = tag;
         }
 
         @Override
         public void run() {
+            Request request = new Request.Builder().url(url).build();
+            okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Toast.show(mContext, "下载失败");
+                }
 
-        }
-    }
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    InputStream is = null;
+                    byte[] buf = new byte[2048];
+                    int len;
+                    FileOutputStream fos = null;
+                    try {
+                        is = response.body().byteStream();
+                        long total = response.body().contentLength();
+                        File item = new File(file);
+                        fos = new FileOutputStream(item);
+                        long sum = 0;
+                        while ((len = is.read(buf)) != -1) {
+                            fos.write(buf, 0, len);
+                            sum += len;
+                            int progress = (int) (sum * 1.0f / total * 100);
+                            EventBus.getDefault().postSticky(new DownloadEvent(false, progress, tag));//发送事件,更新UI
+                        }
+                        fos.flush();
+                        EventBus.getDefault().post(new DownloadEvent(true, 100, tag));//发送事件,更新UI
+                        // 通知图库更新
+                        mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + item.getAbsolutePath())));
 
-
-    private void savePhoto(String file, ByteArrayOutputStream bos) {
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bos.toByteArray(), 0, bos.toByteArray().length);
-        File pic = new File(file);
-        if (!pic.getParentFile().exists()) {
-            if (!pic.getParentFile().mkdir()) {
-                return;
-            }
+                    } catch (Exception e) {
+                        Toast.show(mContext, "下载失败");
+                    } finally {
+                        if (is != null) {
+                            is.close();
+                        }
+                        if (fos != null) {
+                            fos.close();
+                        }
+                    }
+                }
+            });
         }
-        try {
-            FileOutputStream fos = new FileOutputStream(pic);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // 把文件插入到系统图库
-        try {
-            MediaStore.Images.Media.insertImage(mContext.getContentResolver(),
-                    pic.getAbsolutePath(), pic.getName(), null);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        // 通知图库更新
-        mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + pic.getAbsolutePath())));
     }
 }

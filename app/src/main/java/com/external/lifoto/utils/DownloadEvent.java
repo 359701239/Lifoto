@@ -9,8 +9,10 @@ public class DownloadEvent {
     private int progress;
     private String id;
 
-    public void setDone() {
-        this.done = true;
+    public DownloadEvent(boolean done, int progress, String id) {
+        this.done = done;
+        this.progress = progress;
+        this.id = id;
     }
 
     public boolean isDone() {
@@ -21,15 +23,7 @@ public class DownloadEvent {
         return id;
     }
 
-    public void setFileId(String photoId) {
-        this.id = photoId;
-    }
-
     public int getProgress() {
         return progress;
-    }
-
-    public void setProgress(int progress) {
-        this.progress = progress;
     }
 }
