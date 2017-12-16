@@ -7,12 +7,10 @@ import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -77,18 +75,10 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
                         holder.thumb.setImageDrawable(resource);
                     }
                 });
-        holder.more.setOnClickListener(new View.OnClickListener() {
+        holder.download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(context, v);
-                popup.getMenuInflater().inflate(R.menu.photo_more, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
 
-                        return true;
-                    }
-                });
-                popup.show();
             }
         });
         holder.card.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +87,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra("item", items.get(holder.getAdapterPosition()));
                 context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(context,
-                        Pair.create((View) holder.more, "e"),
+                        Pair.create((View) holder.download, "e"),
                         Pair.create((View) holder.bottom, "c"),
                         Pair.create((View) holder.card, "b"),
                         Pair.create((View) holder.thumb, "a")).toBundle());
@@ -117,7 +107,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
         private ElevationCardView card;
         private ScaleImageView thumb;
         private LinearLayout bottom;
-        private ImageView more;
+        private ImageView download;
         private TextView likes;
 
         ViewHolder(View itemView) {
@@ -125,7 +115,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
             card = itemView.findViewById(R.id.card);
             thumb = itemView.findViewById(R.id.item_thumb);
             bottom = itemView.findViewById(R.id.item_bottom);
-            more = itemView.findViewById(R.id.more);
+            download = itemView.findViewById(R.id.download);
             likes = itemView.findViewById(R.id.likes);
         }
     }

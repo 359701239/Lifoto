@@ -4,13 +4,13 @@ package com.external.lifoto.utils;
  * Created by dingmouren on 2017/5/22.
  */
 
-public class LoadPhotoEvent {
+public class DownloadEvent {
     private boolean done = false;
     private int progress;
-    private String photoId;
+    private String id;
 
-    public void setDone(boolean done) {
-        this.done = done;
+    public void setDone() {
+        this.done = true;
     }
 
     public boolean isDone() {
@@ -18,11 +18,11 @@ public class LoadPhotoEvent {
     }
 
     public String getPhotoId() {
-        return photoId;
+        return id;
     }
 
-    public void setPhotoId(String photoId) {
-        this.photoId = photoId;
+    public void setFileId(String photoId) {
+        this.id = photoId;
     }
 
     public int getProgress() {

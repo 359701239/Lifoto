@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import com.external.lifoto.bean.PhotoItem;
 import com.external.lifoto.content.Api;
 import com.external.lifoto.design.EndlessRecyclerOnScrollListener;
 import com.external.lifoto.design.GridItemDivider;
-import com.external.lifoto.design.RecyclerViewScrollDetector;
 import com.external.lifoto.utils.NetUtil;
 
 import java.lang.ref.WeakReference;
@@ -29,14 +29,14 @@ import java.util.ArrayList;
 
 public class SortFragment extends BaseFragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
+    private static final String TAG = SortFragment.class.getName();
     private RecyclerView recyclerView;
     private MainListAdapter adapter;
     private StaggeredGridLayoutManager layoutManager;
     private SwipeRefreshLayout refreshLayout;
     private TextView noNet;
 
-    private RefreshAsyncTask refreshTask;
-    private LoadMoreAsyncTask loadMoreTask;
+    private LoadDataTask loadDataTask;
     private EndlessRecyclerOnScrollListener scrollListener;
     private int currentPage;
 
@@ -61,13 +61,13 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemViewCacheSize(25);
-//        recyclerView.addOnScrollListener(detector);
         recyclerView.addItemDecoration(new GridItemDivider(getResources().getDimensionPixelSize(R.dimen.staggeredDivider)));
         scrollListener = new EndlessRecyclerOnScrollListener(layoutManager) {
             @Override
             public void onLoadMore() {
-                loadMoreTask = new LoadMoreAsyncTask(SortFragment.this);
-                loadMoreTask.execute(Api.getSortUrl(getTitle(), ++currentPage));
+                Log.i(TAG, "onLoadMore");
+                loadDataTask = new LoadDataTask(SortFragment.this, true);
+                loadDataTask.execute(Api.getSortUrl(getTitle(), ++currentPage));
             }
         };
         recyclerView.addOnScrollListener(scrollListener);
@@ -92,15 +92,24 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
         currentPage = 1;
         refreshLayout.setRefreshing(true);
         noNet.setVisibility(View.GONE);
-        refreshTask = new RefreshAsyncTask(this);
-        refreshTask.execute(Api.getSortUrl(getTitle(), 1));
+        loadDataTask = new LoadDataTask(this, false);
+        loadDataTask.execute(Api.getSortUrl(getTitle(), currentPage));
     }
 
-    static class RefreshAsyncTask extends android.os.AsyncTask<String, Void, ArrayList<PhotoItem>> {
+    static class LoadDataTask extends android.os.AsyncTask<String, Void, ArrayList<PhotoItem>> {
         private WeakReference<SortFragment> fragmentWeakReference;
+        private boolean loadMore = false;
 
-        private RefreshAsyncTask(SortFragment fragment) {
+        private LoadDataTask(SortFragment fragment, boolean isLoadMore) {
             fragmentWeakReference = new WeakReference<>(fragment);
+            loadMore = isLoadMore;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            if (loadMore) {
+                fragmentWeakReference.get().refreshLayout.setRefreshing(true);
+            }
         }
 
         @Override
@@ -121,55 +130,14 @@ public class SortFragment extends BaseFragment implements View.OnClickListener, 
                 fragmentWeakReference.get().adapter = new MainListAdapter(fragmentWeakReference.get().activity, photoItems);
                 fragmentWeakReference.get().recyclerView.setAdapter(fragmentWeakReference.get().adapter);
             } else {
-                fragmentWeakReference.get().adapter.setData(photoItems);
+                if (loadMore) {
+                    fragmentWeakReference.get().adapter.insertData(photoItems);
+                    fragmentWeakReference.get().scrollListener.setLoadFinish();
+                } else {
+                    fragmentWeakReference.get().adapter.setData(photoItems);
+                }
             }
             fragmentWeakReference.get().refreshLayout.setRefreshing(false);
         }
     }
-
-    static class LoadMoreAsyncTask extends android.os.AsyncTask<String, Void, ArrayList<PhotoItem>> {
-        private WeakReference<SortFragment> fragmentWeakReference;
-
-        private LoadMoreAsyncTask(SortFragment fragment) {
-            fragmentWeakReference = new WeakReference<>(fragment);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            fragmentWeakReference.get().refreshLayout.setRefreshing(true);
-        }
-
-        @Override
-        protected ArrayList<PhotoItem> doInBackground(String... strings) {
-            String path = strings[0];
-            try {
-                return PhotoItem.parseItems(JSON.parseArray(NetUtil.GetEncHtml(path)));
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<PhotoItem> photoItems) {
-            if (photoItems == null) {
-                fragmentWeakReference.get().noNet.setVisibility(View.VISIBLE);
-            } else if (fragmentWeakReference.get().adapter != null) {
-                fragmentWeakReference.get().adapter.insertData(photoItems);
-            }
-            fragmentWeakReference.get().scrollListener.setLoadFinish();
-            fragmentWeakReference.get().refreshLayout.setRefreshing(false);
-        }
-    }
-
-    private RecyclerViewScrollDetector detector = new RecyclerViewScrollDetector() {
-        @Override
-        public void onScrollUp() {
-            hideSystemUI();
-        }
-
-        @Override
-        public void onScrollDown() {
-            showSystemUI();
-        }
-    };
 }

@@ -84,9 +84,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
-                            case R.id.download:
-                                handler.sendEmptyMessageDelayed(MSG_DOWNLOAD, MSG_DELAY);
-                                break;
                             case R.id.setting:
                                 handler.sendEmptyMessageDelayed(MSG_SETTING, MSG_DELAY);
                                 break;

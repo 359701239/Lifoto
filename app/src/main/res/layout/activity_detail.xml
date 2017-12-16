@@ -18,132 +18,113 @@
         app:cardCornerRadius="4dp"
         app:cardElevation="8dp">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:scrollbars="none">
 
-
-            <ScrollView
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="none">
+                android:orientation="vertical">
 
-                <RelativeLayout
+                <com.external.lifoto.design.widget.ScaleImageView
+                    android:id="@+id/thumb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_alignParentTop="true"
+                    android:transitionName="a" />
 
-                    <com.external.lifoto.design.widget.ScaleImageView
-                        android:id="@+id/thumb"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:transitionName="a" />
+                <ProgressBar
+                    android:id="@+id/progressbar"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:layout_below="@id/thumb"
+                    android:max="100"
+                    android:progressDrawable="@drawable/load_photo_progressbar"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/back"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="16dp"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_arrow_back" />
+
+                <RelativeLayout
+                    android:id="@+id/detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/thumb"
+                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:transitionName="c">
 
                     <ImageView
-                        android:id="@+id/back"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_margin="16dp"
+                        android:id="@+id/download"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="18dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:scaleType="center"
-                        android:src="@drawable/ic_arrow_back" />
+                        android:src="@drawable/ic_file_download"
+                        android:theme="@style/AppTheme.AppBarOverlay"
+                        android:tint="@android:color/white"
+                        android:transitionName="e" />
 
-                    <RelativeLayout
-                        android:id="@+id/detail"
+                    <LinearLayout
+                        android:id="@+id/attrs"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/thumb"
-                        android:layout_marginBottom="@dimen/activity_horizontal_margin"
-                        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                        android:layout_marginStart="@dimen/activity_horizontal_margin"
-                        android:transitionName="c">
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical"
+                        android:visibility="invisible">
 
-                        <LinearLayout
-                            android:id="@+id/des"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tv_attr_size"
+                            style="@style/PhotoAttrTextViewStyle"
+                            android:drawableStart="@drawable/ic_size" />
 
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="56dp"
-                                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                                android:layout_weight="1"
-                                android:gravity="center_vertical"
-                                android:textColor="@android:color/white"
-                                android:textSize="16sp" />
+                        <TextView
+                            android:id="@+id/tv_attr_exposure"
+                            style="@style/PhotoAttrTextViewStyle"
+                            android:drawableStart="@drawable/ic_exposure" />
 
-                            <ImageView
-                                android:id="@+id/more"
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:scaleType="center"
-                                android:src="@drawable/ic_more_vert"
-                                android:tint="@android:color/white"
-                                android:transitionName="e" />
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_attr_aperture"
+                            style="@style/PhotoAttrTextViewStyle"
+                            android:drawableStart="@drawable/ic_aperture" />
 
-                        <LinearLayout
-                            android:id="@+id/attrs"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/des"
-                            android:orientation="vertical"
-                            android:visibility="invisible">
+                        <TextView
+                            android:id="@+id/tv_attr_focal"
+                            style="@style/PhotoAttrTextViewStyle"
+                            android:drawableStart="@drawable/ic_focal" />
 
-                            <TextView
-                                android:id="@+id/tv_attr_size"
-                                style="@style/PhotoAttrTextViewStyle"
-                                android:drawableStart="@drawable/ic_size" />
+                        <TextView
+                            android:id="@+id/tv_attr_model"
+                            style="@style/PhotoAttrTextViewStyle"
+                            android:drawableStart="@drawable/ic_model" />
 
-                            <TextView
-                                android:id="@+id/tv_attr_exposure"
-                                style="@style/PhotoAttrTextViewStyle"
-                                android:drawableStart="@drawable/ic_exposure" />
+                        <TextView
+                            android:id="@+id/tv_attr_iso"
+                            style="@style/PhotoAttrTextViewStyle"
+                            android:drawableStart="@drawable/ic_iso" />
+                    </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/tv_attr_aperture"
-                                style="@style/PhotoAttrTextViewStyle"
-                                android:drawableStart="@drawable/ic_aperture" />
+                    <ProgressBar
+                        android:id="@+id/loadattr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true" />
 
-                            <TextView
-                                android:id="@+id/tv_attr_focal"
-                                style="@style/PhotoAttrTextViewStyle"
-                                android:drawableStart="@drawable/ic_focal" />
-
-                            <TextView
-                                android:id="@+id/tv_attr_model"
-                                style="@style/PhotoAttrTextViewStyle"
-                                android:drawableStart="@drawable/ic_model" />
-
-                            <TextView
-                                android:id="@+id/tv_attr_iso"
-                                style="@style/PhotoAttrTextViewStyle"
-                                android:drawableStart="@drawable/ic_iso" />
-                        </LinearLayout>
-
-                        <ProgressBar
-                            android:id="@+id/loadattr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true" />
-
-                    </RelativeLayout>
                 </RelativeLayout>
-            </ScrollView>
-
-            <!--进度条-->
-            <ProgressBar
-                android:id="@+id/progressbar"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:alpha="0"
-                android:max="100"
-                android:progressDrawable="@drawable/load_photo_progressbar" />
-        </LinearLayout>
+            </RelativeLayout>
+        </ScrollView>
 
     </android.support.v7.widget.CardView>
 
