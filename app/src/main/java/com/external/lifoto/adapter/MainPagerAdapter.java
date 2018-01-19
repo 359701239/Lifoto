@@ -4,7 +4,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
-import com.external.lifoto.fragment.SortFragment;
+
+import com.external.lifoto.ui.DataFragment;
 
 import java.util.ArrayList;
 
@@ -14,9 +15,9 @@ import java.util.ArrayList;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
-    private ArrayList<SortFragment> fragments;
+    private ArrayList<DataFragment> fragments;
 
-    public MainPagerAdapter(FragmentManager manager, ArrayList<SortFragment> fragments) {
+    public MainPagerAdapter(FragmentManager manager, ArrayList<DataFragment> fragments) {
         super(manager);
         this.fragments = fragments;
     }

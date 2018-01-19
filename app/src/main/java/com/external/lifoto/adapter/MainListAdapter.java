@@ -35,20 +35,19 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
     private Activity context;
     private ArrayList<PhotoItem> items = new ArrayList<>();
 
-    public MainListAdapter(Activity context, ArrayList<PhotoItem> items) {
+    public MainListAdapter(Activity context) {
         this.context = context;
-        this.items = items;
     }
 
-    public void setData(ArrayList<PhotoItem> items) {
-        this.items = items;
-        notifyDataSetChanged();
-    }
-
-    public void insertData(ArrayList<PhotoItem> items) {
-        int count = getItemCount();
-        this.items.addAll(items);
-        notifyItemRangeInserted(count, items.size());
+    public void setData(ArrayList<PhotoItem> items, boolean append) {
+        if (append) {
+            int count = getItemCount();
+            this.items.addAll(items);
+            notifyItemRangeInserted(count, items.size());
+        } else {
+            this.items = items;
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -91,7 +90,6 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
                         Pair.create((View) holder.bottom, "c"),
                         Pair.create((View) holder.card, "b"),
                         Pair.create((View) holder.thumb, "a")).toBundle());
-//                context.startActivity(intent);
             }
         });
     }

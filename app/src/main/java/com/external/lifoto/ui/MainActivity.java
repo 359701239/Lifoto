@@ -1,4 +1,4 @@
-package com.external.lifoto;
+package com.external.lifoto.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,8 +8,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,15 +16,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.external.lifoto.adapter.MainPagerAdapter;
-import com.external.lifoto.content.TabList;
+import com.external.lifoto.DownloadActivity;
+import com.external.lifoto.R;
+import com.external.lifoto.SettingActivity;
 import com.external.lifoto.design.widget.FitToolbar;
-import com.external.lifoto.fragment.SortFragment;
+import com.external.lifoto.model.DataRepository;
+import com.external.lifoto.model.DataSourceLocal;
+import com.external.lifoto.model.DataSourceRemote;
+import com.external.lifoto.presenter.DataPresenter;
 import com.external.lifoto.utils.Dialog;
 import com.external.lifoto.utils.Toast;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 
 /**
  * Created by zuojie on 17-11-30.
@@ -37,11 +38,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private FitToolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager pager;
     private TextView title;
 
-    private ArrayList<SortFragment> fragments;
+    private DataFragment dataFragment;
+    private DataPresenter dataPresenter;
 
     private Handler handler;
     private static final int MSG_EXIT = 0;
@@ -62,12 +62,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         drawer = findViewById(R.id.drawer);
         navigationView = findViewById(R.id.navigation);
         toolbar = findViewById(R.id.toolbar);
-        tabLayout = findViewById(R.id.tab);
-        pager = findViewById(R.id.pager);
         title = findViewById(R.id.title);
 
         init();
-        initPager();
     }
 
     private void init() {
@@ -98,26 +95,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         return true;
                     }
                 });
+        dataFragment = (DataFragment) getFragmentManager().findFragmentById(R.id.contentFrame);
+        if (dataFragment == null) {
+            dataFragment = new DataFragment();
+            getFragmentManager().beginTransaction()
+                    .add(R.id.contentFrame, dataFragment).commit();
+        }
+        dataPresenter = new DataPresenter(
+                DataRepository.getInstance(
+                        DataSourceRemote.getInstance(), DataSourceLocal.getInstance()), dataFragment);
     }
 
-    private void initPager() {
-        String[] tabs = TabList.tabs;
-        fragments = new ArrayList<>();
-        for (String tab : tabs) {
-            SortFragment fragment = new SortFragment();
-            fragment.setTitle(tab);
-            fragments.add(fragment);
-        }
-        MainPagerAdapter pagerAdapter = new MainPagerAdapter(getFragmentManager(), fragments);
-        pager.setAdapter(pagerAdapter);
-        tabLayout.setupWithViewPager(pager);
+    @Override
+    protected void onDestroy() {
+        dataPresenter.stop();
+        super.onDestroy();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.action:
-                fragments.get(pager.getCurrentItem()).goToTop();
+                dataFragment.goToTop();
                 break;
         }
     }

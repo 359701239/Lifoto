@@ -12,8 +12,8 @@ public class Api {
 
     private static final int perPageNum = 25;
 
-    public static String getSortUrl(String category, int page) {
-        switch (category) {
+    public static String getSortUrl(int page) {
+        /*switch (category) {
             case "建筑":
                 return getCategoryUrl(2, page);
             case "饮食":
@@ -32,7 +32,8 @@ public class Api {
                 return getGoodListUrl(page);
             default:
                 return null;
-        }
+        }*/
+        return getGoodListUrl(page);
     }
 
     public static String getInfoUrl(String id) {
